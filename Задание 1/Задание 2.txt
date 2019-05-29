@@ -1,0 +1,15 @@
+1. Запрос на создание всех таблий бд
+	CREATE TABLE `debts` (`gives` varchar(255) NOT NULL, `gets` varchar(255) NOT NULL, `sum` float NOT NULL) ENGINE=InnoDB DEFAULT CHARSET=utf8
+2. Запрос на добавление записи о факте займа
+	INSERT INTO `debts` (gives, gets, sum) VALUES ('Человек 1', 'Человек 2', 15)
+3. Узнать, сколько Человек 1 должен Человеку 2
+	SELECT SUM(debts.sum) FROM `debts` WHERE debts.gets = 'Человек 1' AND debts.gives = 'Человек 2'
+4. Узнать сумму, которую Человек 1 отдолжил у других людей минус сумма, которую он отдолжил другим (текущий баланс):
+	SELECT SUM(debts.sum)-(
+		SELECT SUM(debts.sum) FROM `debts` WHERE debts.gives = 'Человек 1')
+	as balance FROM `debts` WHERE debts.gets = 'Человек 1'
+5. Узнать кто и сколько должен Человеку 1
+	SELECT debts.gets, SUM(debts.sum) FROM `debts` WHERE debts.gives = 'Человек 1' GROUP BY debts.gets
+
+PS: Да, можно сделать родительскую таблицу этих людей и использовать таблицу debts, как дочернюю, связывая её полями gets и gives с таблицей id или 
+напрямую с именами в таблице людей, но я решил сэкономить время для изучения codeigniter, т.к. до этого совершенно не работал с этим фреймворком.
